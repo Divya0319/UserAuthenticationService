@@ -36,6 +36,17 @@ public class AuthService implements IAuthService {
 
     @Override
     public User login(String email, String password) {
-        return null;
+        Optional<User> userOptional = userRepo.findByEmail(email);
+        if(userOptional.isEmpty()) {
+            return null;
+        }
+        User user = userOptional.get();
+        if(!bCryptPasswordEncoder.matches(password, user.getPassword())) {
+            return null;
+        }
+
+        return user;
+
+        // Token generation
     }
 }
