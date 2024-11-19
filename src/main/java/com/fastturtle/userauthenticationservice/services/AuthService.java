@@ -2,6 +2,7 @@ package com.fastturtle.userauthenticationservice.services;
 
 import com.fastturtle.userauthenticationservice.models.User;
 import com.fastturtle.userauthenticationservice.repos.UserRepo;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;
@@ -11,8 +12,11 @@ public class AuthService implements IAuthService {
 
     private final UserRepo userRepo;
 
-    public AuthService(UserRepo userRepo) {
+    private final BCryptPasswordEncoder bCryptPasswordEncoder;
+
+    public AuthService(UserRepo userRepo, BCryptPasswordEncoder bCryptPasswordEncoder) {
         this.userRepo = userRepo;
+        this.bCryptPasswordEncoder = bCryptPasswordEncoder;
     }
 
     @Override
@@ -24,7 +28,7 @@ public class AuthService implements IAuthService {
 
         User user = new User();
         user.setEmail(email);
-        user.setPassword(password);
+        user.setPassword(bCryptPasswordEncoder.encode(password));
         userRepo.save(user);
 
         return user;
