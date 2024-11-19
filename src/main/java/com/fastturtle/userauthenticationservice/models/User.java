@@ -1,7 +1,11 @@
 package com.fastturtle.userauthenticationservice.models;
 
+import jakarta.persistence.ManyToMany;
 import lombok.Getter;
 import lombok.Setter;
+
+import java.util.HashSet;
+import java.util.Set;
 
 @Getter
 @Setter
@@ -11,5 +15,12 @@ public class User extends BaseModel {
 
     private String password;
 
-    private Role role;
+    private Set<Role> roles = new HashSet<>();  // bcz a person can have multiple roles(instructor, mentor, ta etc.)
+                                                // in case we don't define a role, by default it will nbe empty set for this user
+
+    // one user can have many roles
+    // one role can be played by multiple people(many people can be instructors at the same time)
+    // so M:M
+
+
 }
