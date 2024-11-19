@@ -31,17 +31,16 @@ public class AuthController {
 
     @PostMapping("/signup")
     public ResponseEntity<UserDTO> signUp(@RequestBody SignupRequestDTO signupRequestDTO) {
+
         User user = authService.signUp(signupRequestDTO.getEmail(), signupRequestDTO.getPassword());
 
-        try {
-            if(user == null) {
-                throw new UserAlreadyExistsException("User Already exists. Please try a different email");
-            }
-        } catch(UserAlreadyExistsException ex) {
-            throw ex;
+        if(user == null) {
+            throw new UserAlreadyExistsException("User Already exists. Please try a different email");
+        } else {
+            return new ResponseEntity<>(from(user), HttpStatus.CREATED);
         }
 
-        return new ResponseEntity<>(from(user), HttpStatus.CREATED);
+
     }
 
     @PostMapping("/login")
