@@ -2,9 +2,15 @@ package com.fastturtle.userauthenticationservice.services;
 
 import com.fastturtle.userauthenticationservice.models.User;
 import com.fastturtle.userauthenticationservice.repos.UserRepo;
+import io.jsonwebtoken.Jwts;
+import org.antlr.v4.runtime.misc.Pair;
+import org.springframework.http.HttpHeaders;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.util.LinkedMultiValueMap;
+import org.springframework.util.MultiValueMap;
 
+import java.nio.charset.StandardCharsets;
 import java.util.Optional;
 
 @Service
@@ -35,7 +41,7 @@ public class AuthService implements IAuthService {
     }
 
     @Override
-    public User login(String email, String password) {
+    public Pair<User, MultiValueMap<String, String>> login(String email, String password) {
         Optional<User> userOptional = userRepo.findByEmail(email);
         if(userOptional.isEmpty()) {
             return null;
@@ -45,8 +51,25 @@ public class AuthService implements IAuthService {
             return null;
         }
 
-        return user;
-
         // Token generation
+
+        String message = "{\n" +
+                "  \"email\": \"anurag@scaler.com\",\n" +
+                " \"roles\": [\n" +
+                "   \"instructor\",\n" +
+                "   \"buddy\"\n" +
+                " ],\n" +
+                " \"expirationDate\": \"25thJuly2024\"\n" +
+                "}";
+
+        byte[] content = message.getBytes(StandardCharsets.UTF_8);
+        String token = Jwts.builder().content(content).compact();
+
+        MultiValueMap<String, String> headers = new LinkedMultiValueMap<>();
+        headers.add(HttpHeaders.SET_COOKIE, token);
+
+        return new Pair<User, MultiValueMap<String, String>>(user, headers);
+
+
     }
 }

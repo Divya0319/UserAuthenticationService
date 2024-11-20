@@ -6,9 +6,11 @@ import com.fastturtle.userauthenticationservice.dto.SignupRequestDTO;
 import com.fastturtle.userauthenticationservice.dto.UserDTO;
 import com.fastturtle.userauthenticationservice.models.User;
 import com.fastturtle.userauthenticationservice.services.IAuthService;
+import org.antlr.v4.runtime.misc.Pair;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.BadCredentialsException;
+import org.springframework.util.MultiValueMap;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -45,12 +47,14 @@ public class AuthController {
     }
 
     @PostMapping("/login")
-    public UserDTO login(@RequestBody LoginRequestDTO loginRequestDTO) {
-        User user = authService.login(loginRequestDTO.getEmail(), loginRequestDTO.getPassword());
+    public ResponseEntity<UserDTO> login(@RequestBody LoginRequestDTO loginRequestDTO) {
+        Pair<User, MultiValueMap<String, String>> userWithHeaders = authService.login(loginRequestDTO.getEmail(), loginRequestDTO.getPassword());
+
+        User user = userWithHeaders.a;
         if(user == null) {
             throw new BadCredentialsException("Bad credentials");
         }
-        return from(user);
+        return new ResponseEntity<>(from(user), userWithHeaders.b, HttpStatus.OK);
     }
 
     public UserDTO from(User user) {
