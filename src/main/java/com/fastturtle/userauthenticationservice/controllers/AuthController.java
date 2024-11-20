@@ -1,6 +1,6 @@
 package com.fastturtle.userauthenticationservice.controllers;
 
-import com.fastturtle.userauthenticationservice.UserAlreadyExistsException;
+import com.fastturtle.userauthenticationservice.exceptions.UserAlreadyExistsException;
 import com.fastturtle.userauthenticationservice.dto.LoginRequestDTO;
 import com.fastturtle.userauthenticationservice.dto.SignupRequestDTO;
 import com.fastturtle.userauthenticationservice.dto.UserDTO;

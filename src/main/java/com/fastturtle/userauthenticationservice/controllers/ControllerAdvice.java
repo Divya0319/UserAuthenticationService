@@ -1,6 +1,6 @@
 package com.fastturtle.userauthenticationservice.controllers;
 
-import com.fastturtle.userauthenticationservice.UserAlreadyExistsException;
+import com.fastturtle.userauthenticationservice.exceptions.UserAlreadyExistsException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.BadCredentialsException;

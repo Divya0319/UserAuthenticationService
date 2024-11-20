@@ -3,6 +3,7 @@ package com.fastturtle.userauthenticationservice.services;
 import com.fastturtle.userauthenticationservice.models.User;
 import com.fastturtle.userauthenticationservice.repos.UserRepo;
 import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.security.MacAlgorithm;
 import org.antlr.v4.runtime.misc.Pair;
 import org.springframework.http.HttpHeaders;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -10,6 +11,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 
+import javax.crypto.SecretKey;
 import java.nio.charset.StandardCharsets;
 import java.util.Optional;
 
@@ -63,7 +65,9 @@ public class AuthService implements IAuthService {
                 "}";
 
         byte[] content = message.getBytes(StandardCharsets.UTF_8);
-        String token = Jwts.builder().content(content).compact();
+        MacAlgorithm algorithm = Jwts.SIG.HS256;
+        SecretKey secretKey = algorithm.key().build();
+        String token = Jwts.builder().content(content).signWith(secretKey).compact();
 
         MultiValueMap<String, String> headers = new LinkedMultiValueMap<>();
         headers.add(HttpHeaders.SET_COOKIE, token);
