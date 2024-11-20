@@ -13,6 +13,8 @@ import org.springframework.util.MultiValueMap;
 
 import javax.crypto.SecretKey;
 import java.nio.charset.StandardCharsets;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Optional;
 
 @Service
@@ -55,19 +57,29 @@ public class AuthService implements IAuthService {
 
         // Token generation
 
-        String message = "{\n" +
-                "  \"email\": \"anurag@scaler.com\",\n" +
-                " \"roles\": [\n" +
-                "   \"instructor\",\n" +
-                "   \"buddy\"\n" +
-                " ],\n" +
-                " \"expirationDate\": \"25thJuly2024\"\n" +
-                "}";
+//        String message = "{\n" +
+//                "  \"email\": \"anurag@scaler.com\",\n" +
+//                " \"roles\": [\n" +
+//                "   \"instructor\",\n" +
+//                "   \"buddy\"\n" +
+//                " ],\n" +
+//                " \"expirationDate\": \"25thJuly2024\"\n" +
+//                "}";
 
-        byte[] content = message.getBytes(StandardCharsets.UTF_8);
+        // Generating user data dynamically
+        Map<String, Object> claims = new HashMap<>();
+        claims.put("user_id__", user.getId());
+        claims.put("roles", user.getRoles());
+        claims.put("email", user.getEmail());
+        long nowInMillis = System.currentTimeMillis();
+        claims.put("iat", nowInMillis);
+        claims.put("exp", nowInMillis + 1000000);
+
+        //byte[] content = message.getBytes(StandardCharsets.UTF_8);
         MacAlgorithm algorithm = Jwts.SIG.HS256;
-        SecretKey secretKey = algorithm.key().build();
-        String token = Jwts.builder().content(content).signWith(secretKey).compact();
+        SecretKey secretKey = algorithm.key().build();  // everytime we run these two lines, it will generate a unique and new secret key
+        //String token = Jwts.builder().content(content).signWith(secretKey).compact();
+        String token = Jwts.builder().claims(claims).signWith(secretKey).compact();
 
         MultiValueMap<String, String> headers = new LinkedMultiValueMap<>();
         headers.add(HttpHeaders.SET_COOKIE, token);
