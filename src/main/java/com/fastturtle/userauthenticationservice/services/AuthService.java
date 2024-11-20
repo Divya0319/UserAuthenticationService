@@ -88,4 +88,11 @@ public class AuthService implements IAuthService {
 
 
     }
+
+    // TOKEN VALIDATION
+    //exact token which we are getting in request - match with
+    // token stored into our database
+
+    // decrypt(unassemble) token - to get expiry
+    // if it's not expired - then it's valid
 }
