@@ -1,6 +1,9 @@
 package com.fastturtle.userauthenticationservice.services;
 
+import com.fastturtle.userauthenticationservice.models.Session;
+import com.fastturtle.userauthenticationservice.models.SessionState;
 import com.fastturtle.userauthenticationservice.models.User;
+import com.fastturtle.userauthenticationservice.repos.SessionRepo;
 import com.fastturtle.userauthenticationservice.repos.UserRepo;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.MacAlgorithm;
@@ -12,7 +15,6 @@ import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 
 import javax.crypto.SecretKey;
-import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
@@ -22,10 +24,13 @@ public class AuthService implements IAuthService {
 
     private final UserRepo userRepo;
 
+    private final SessionRepo sessionRepo;
+
     private final BCryptPasswordEncoder bCryptPasswordEncoder;
 
-    public AuthService(UserRepo userRepo, BCryptPasswordEncoder bCryptPasswordEncoder) {
+    public AuthService(UserRepo userRepo, SessionRepo sessionRepo, BCryptPasswordEncoder bCryptPasswordEncoder) {
         this.userRepo = userRepo;
+        this.sessionRepo = sessionRepo;
         this.bCryptPasswordEncoder = bCryptPasswordEncoder;
     }
 
@@ -83,6 +88,12 @@ public class AuthService implements IAuthService {
 
         MultiValueMap<String, String> headers = new LinkedMultiValueMap<>();
         headers.add(HttpHeaders.SET_COOKIE, token);
+
+        Session session = new Session();
+        session.setSessionState(SessionState.ACTIVE);
+        session.setUser(user);
+        session.setToken(token);
+        sessionRepo.save(session);
 
         return new Pair<User, MultiValueMap<String, String>>(user, headers);
 
