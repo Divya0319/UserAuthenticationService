@@ -1,4 +1,4 @@
-package com.fastturtle.userauthenticationservice.dto;
+package com.fastturtle.userauthenticationservice.dtos;
 
 import com.fastturtle.userauthenticationservice.models.Role;
 import lombok.Getter;

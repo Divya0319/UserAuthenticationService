@@ -1,11 +1,11 @@
-package com.fastturtle.userauthenticationservice.dto;
+package com.fastturtle.userauthenticationservice.dtos;
 
 import lombok.Getter;
 import lombok.Setter;
 
 @Getter
 @Setter
-public class SignupRequestDTO {
+public class LoginRequestDTO {
 
     private String email;
 

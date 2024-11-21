@@ -5,6 +5,8 @@ import com.fastturtle.userauthenticationservice.models.SessionState;
 import com.fastturtle.userauthenticationservice.models.User;
 import com.fastturtle.userauthenticationservice.repos.SessionRepo;
 import com.fastturtle.userauthenticationservice.repos.UserRepo;
+import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.JwtParser;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.MacAlgorithm;
 import org.antlr.v4.runtime.misc.Pair;
@@ -28,10 +30,13 @@ public class AuthService implements IAuthService {
 
     private final BCryptPasswordEncoder bCryptPasswordEncoder;
 
-    public AuthService(UserRepo userRepo, SessionRepo sessionRepo, BCryptPasswordEncoder bCryptPasswordEncoder) {
+    private final SecretKey secretKey;
+
+    public AuthService(UserRepo userRepo, SessionRepo sessionRepo, BCryptPasswordEncoder bCryptPasswordEncoder, SecretKey secretKey) {
         this.userRepo = userRepo;
         this.sessionRepo = sessionRepo;
         this.bCryptPasswordEncoder = bCryptPasswordEncoder;
+        this.secretKey = secretKey;
     }
 
     @Override
@@ -81,8 +86,8 @@ public class AuthService implements IAuthService {
         claims.put("exp", nowInMillis + 1000000);
 
         //byte[] content = message.getBytes(StandardCharsets.UTF_8);
-        MacAlgorithm algorithm = Jwts.SIG.HS256;
-        SecretKey secretKey = algorithm.key().build();  // everytime we run these two lines, it will generate a unique and new secret key
+        //MacAlgorithm algorithm = Jwts.SIG.HS256;
+        //SecretKey secretKey = algorithm.key().build();  // everytime we run these two lines, it will generate a unique and new secret key
         //String token = Jwts.builder().content(content).signWith(secretKey).compact();
         String token = Jwts.builder().claims(claims).signWith(secretKey).compact();
 
@@ -97,6 +102,51 @@ public class AuthService implements IAuthService {
 
         return new Pair<User, MultiValueMap<String, String>>(user, headers);
 
+
+    }
+
+    @Override
+    public Boolean validateToken(String token, Long userId) {
+
+        Optional<Session> optionalSession = sessionRepo.findByToken(token);
+        if(optionalSession.isEmpty()) {
+            System.out.println("Token mismatch");
+            return false;
+        }
+
+        Session session = optionalSession.get();
+
+        String storedToken = session.getToken();
+
+        JwtParser jwtParser = Jwts.parser().verifyWith(secretKey).build();
+
+        Claims claims = jwtParser.parseSignedClaims(storedToken).getPayload();
+
+        Long tokenExpiry = (Long) claims.get("exp");
+
+        Long currentTime = System.currentTimeMillis();
+
+        System.out.println(tokenExpiry);
+        System.out.println(currentTime);
+
+        if(currentTime > tokenExpiry) {
+            System.out.println("Token is expired");
+            return false;
+        }
+
+        // till this point it's good to go
+
+        User user = userRepo.findById(userId).get();
+        String email = user.getEmail();
+        String tokenEmail = (String) claims.get("email");
+
+        if(!email.equals(tokenEmail)) {
+            System.out.println("Email mismatch");
+
+            return false;
+        }
+
+        return true;
 
     }
 

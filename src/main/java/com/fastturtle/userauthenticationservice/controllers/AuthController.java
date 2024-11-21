@@ -1,9 +1,11 @@
 package com.fastturtle.userauthenticationservice.controllers;
 
+import com.fastturtle.userauthenticationservice.dtos.ValidateTokenRequestDTO;
+import com.fastturtle.userauthenticationservice.exceptions.InvalidTokenException;
 import com.fastturtle.userauthenticationservice.exceptions.UserAlreadyExistsException;
-import com.fastturtle.userauthenticationservice.dto.LoginRequestDTO;
-import com.fastturtle.userauthenticationservice.dto.SignupRequestDTO;
-import com.fastturtle.userauthenticationservice.dto.UserDTO;
+import com.fastturtle.userauthenticationservice.dtos.LoginRequestDTO;
+import com.fastturtle.userauthenticationservice.dtos.SignupRequestDTO;
+import com.fastturtle.userauthenticationservice.dtos.UserDTO;
 import com.fastturtle.userauthenticationservice.models.User;
 import com.fastturtle.userauthenticationservice.services.IAuthService;
 import org.antlr.v4.runtime.misc.Pair;
@@ -55,6 +57,17 @@ public class AuthController {
             throw new BadCredentialsException("Bad credentials");
         }
         return new ResponseEntity<>(from(user), userWithHeaders.b, HttpStatus.OK);
+    }
+
+    @PostMapping("/validate")
+    public Boolean validateToken(@RequestBody ValidateTokenRequestDTO validateTokenRequestDTO) {
+        Boolean response = authService.validateToken(validateTokenRequestDTO.getToken(), validateTokenRequestDTO.getUserId());
+
+        if(!response) {
+            throw new InvalidTokenException("Either token is stale or Invalid");
+        }
+
+        return true;
     }
 
     public UserDTO from(User user) {
