@@ -131,6 +131,7 @@ public class AuthService implements IAuthService {
 
         if(currentTime > tokenExpiry) {
             System.out.println("Token is expired");
+            //set state to expired in my db
             return false;
         }
 
