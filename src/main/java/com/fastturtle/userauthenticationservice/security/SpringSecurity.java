@@ -29,10 +29,10 @@ public class SpringSecurity {
         return new BCryptPasswordEncoder();
     }
 
-    @Bean
-    public SecretKey secretKey() {
-        MacAlgorithm algorithm = Jwts.SIG.HS256;
-        SecretKey secretKey = algorithm.key().build();
-        return secretKey;
-    }
+//    @Bean
+//    public SecretKey secretKey() {
+//        MacAlgorithm algorithm = Jwts.SIG.HS256;
+//        SecretKey secretKey = algorithm.key().build();
+//        return secretKey;
+//    }
 }

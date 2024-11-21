@@ -8,8 +8,12 @@ import com.fastturtle.userauthenticationservice.repos.UserRepo;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.JwtParser;
 import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.io.Decoders;
+import io.jsonwebtoken.security.Keys;
 import io.jsonwebtoken.security.MacAlgorithm;
+import jakarta.annotation.PostConstruct;
 import org.antlr.v4.runtime.misc.Pair;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpHeaders;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -17,6 +21,7 @@ import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 
 import javax.crypto.SecretKey;
+import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
@@ -30,13 +35,22 @@ public class AuthService implements IAuthService {
 
     private final BCryptPasswordEncoder bCryptPasswordEncoder;
 
-    private final SecretKey secretKey;
+    @Value("${key1}")
+    private String key1;
 
-    public AuthService(UserRepo userRepo, SessionRepo sessionRepo, BCryptPasswordEncoder bCryptPasswordEncoder, SecretKey secretKey) {
+    @Value("${key2}")
+    private String key2;
+
+    public AuthService(UserRepo userRepo, SessionRepo sessionRepo, BCryptPasswordEncoder bCryptPasswordEncoder) {
         this.userRepo = userRepo;
         this.sessionRepo = sessionRepo;
         this.bCryptPasswordEncoder = bCryptPasswordEncoder;
-        this.secretKey = secretKey;
+    }
+
+    @PostConstruct
+    private void postConstruct() {
+        System.out.println(key1);
+        System.out.println(key2);
     }
 
     @Override
@@ -89,7 +103,8 @@ public class AuthService implements IAuthService {
         //MacAlgorithm algorithm = Jwts.SIG.HS256;
         //SecretKey secretKey = algorithm.key().build();  // everytime we run these two lines, it will generate a unique and new secret key
         //String token = Jwts.builder().content(content).signWith(secretKey).compact();
-        String token = Jwts.builder().claims(claims).signWith(secretKey).compact();
+
+        String token = Jwts.builder().claims(claims).signWith(generateKey()).compact();
 
         MultiValueMap<String, String> headers = new LinkedMultiValueMap<>();
         headers.add(HttpHeaders.SET_COOKIE, token);
@@ -105,6 +120,12 @@ public class AuthService implements IAuthService {
 
     }
 
+    private SecretKey generateKey() {
+        byte[] keyBytes = key1.getBytes(StandardCharsets.UTF_8);
+        SecretKey secretKey = Keys.hmacShaKeyFor(keyBytes);
+        return secretKey;
+    }
+
     @Override
     public Boolean validateToken(String token, Long userId) {
 
@@ -118,7 +139,7 @@ public class AuthService implements IAuthService {
 
         String storedToken = session.getToken();
 
-        JwtParser jwtParser = Jwts.parser().verifyWith(secretKey).build();
+        JwtParser jwtParser = Jwts.parser().verifyWith(generateKey()).build();
 
         Claims claims = jwtParser.parseSignedClaims(storedToken).getPayload();
 
