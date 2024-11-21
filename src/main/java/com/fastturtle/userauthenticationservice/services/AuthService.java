@@ -28,14 +28,16 @@ public class AuthService implements IAuthService {
 
     private final SessionRepo sessionRepo;
 
-    private final BCryptPasswordEncoder bCryptPasswordEncoder;
+//    private final BCryptPasswordEncoder bCryptPasswordEncoder;
 
     private final SecretKey secretKey;
 
-    public AuthService(UserRepo userRepo, SessionRepo sessionRepo, BCryptPasswordEncoder bCryptPasswordEncoder, SecretKey secretKey) {
+    public AuthService(UserRepo userRepo, SessionRepo sessionRepo,
+//                       BCryptPasswordEncoder bCryptPasswordEncoder,
+                       SecretKey secretKey) {
         this.userRepo = userRepo;
         this.sessionRepo = sessionRepo;
-        this.bCryptPasswordEncoder = bCryptPasswordEncoder;
+//        this.bCryptPasswordEncoder = bCryptPasswordEncoder;
         this.secretKey = secretKey;
     }
 
@@ -48,7 +50,8 @@ public class AuthService implements IAuthService {
 
         User user = new User();
         user.setEmail(email);
-        user.setPassword(bCryptPasswordEncoder.encode(password));
+//        user.setPassword(bCryptPasswordEncoder.encode(password));
+        user.setPassword(password);
         userRepo.save(user);
 
         return user;
@@ -61,7 +64,10 @@ public class AuthService implements IAuthService {
             return null;
         }
         User user = userOptional.get();
-        if(!bCryptPasswordEncoder.matches(password, user.getPassword())) {
+//        if(!bCryptPasswordEncoder.matches(password, user.getPassword())) {
+//            return null;
+//        }
+        if(!user.getPassword().equals(password)) {
             return null;
         }
 
