@@ -44,8 +44,8 @@ import org.springframework.security.web.util.matcher.MediaTypeRequestMatcher;
 @EnableWebSecurity
 public class SecurityConfig {
 
-//    @Autowired
-//    BCryptPasswordEncoder bCryptPasswordEncoder;
+    @Autowired
+    BCryptPasswordEncoder bCryptPasswordEncoder;
 
     @Bean
     @Order(1)
@@ -90,10 +90,9 @@ public class SecurityConfig {
 
     @Bean
     public UserDetailsService userDetailsService() {
-        UserDetails userDetails = User.withDefaultPasswordEncoder()
+        UserDetails userDetails = User.builder()         //withDefaultPasswordEncoder()
                 .username("user")
-//                .password(bCryptPasswordEncoder.encode("password"))
-                .password("password")
+                .password(bCryptPasswordEncoder.encode("password"))
                 .roles("USER")
                 .build();
 
