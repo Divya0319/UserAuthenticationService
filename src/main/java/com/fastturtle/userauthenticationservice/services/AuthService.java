@@ -1,5 +1,9 @@
 package com.fastturtle.userauthenticationservice.services;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fastturtle.userauthenticationservice.clients.KafkaProducerClient;
+import com.fastturtle.userauthenticationservice.dtos.EmailDTO;
 import com.fastturtle.userauthenticationservice.models.Session;
 import com.fastturtle.userauthenticationservice.models.SessionState;
 import com.fastturtle.userauthenticationservice.models.User;
@@ -35,16 +39,28 @@ public class AuthService implements IAuthService {
 
     private final BCryptPasswordEncoder bCryptPasswordEncoder;
 
+    private final KafkaProducerClient kafkaProducerClient;
+
+    private final ObjectMapper objectMapper;
+
     @Value("${key1}")
     private String key1;
 
     @Value("${key2}")
     private String key2;
 
-    public AuthService(UserRepo userRepo, SessionRepo sessionRepo, BCryptPasswordEncoder bCryptPasswordEncoder) {
+    public AuthService(UserRepo userRepo, SessionRepo sessionRepo, BCryptPasswordEncoder bCryptPasswordEncoder, KafkaProducerClient kafkaProducerClient, ObjectMapper objectMapper) {
         this.userRepo = userRepo;
         this.sessionRepo = sessionRepo;
         this.bCryptPasswordEncoder = bCryptPasswordEncoder;
+        this.kafkaProducerClient = kafkaProducerClient;
+        this.objectMapper = objectMapper;
+    }
+
+    @PostConstruct
+    private void postConstruct() {
+        System.out.println(key1);
+        System.out.println(key2);
     }
 
     @Override
@@ -58,6 +74,16 @@ public class AuthService implements IAuthService {
         user.setEmail(email);
         user.setPassword(bCryptPasswordEncoder.encode(password));
         userRepo.save(user);
+        try {
+            EmailDTO emailDTO = new EmailDTO();
+            emailDTO.setSubject("Welcome to Scaler");
+            emailDTO.setBody("This is a test message");
+            emailDTO.setFrom("divygupta0319@gmail.com");
+
+            kafkaProducerClient.sendMessage("signup", objectMapper.writeValueAsString(emailDTO));
+        } catch (JsonProcessingException e) {
+            throw new RuntimeException(e);
+        }
 
         return user;
     }
