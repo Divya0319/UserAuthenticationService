@@ -76,6 +76,7 @@ public class AuthService implements IAuthService {
         userRepo.save(user);
         try {
             EmailDTO emailDTO = new EmailDTO();
+            emailDTO.setTo(email);
             emailDTO.setSubject("Welcome to Scaler");
             emailDTO.setBody("This is a test message");
             emailDTO.setFrom("divygupta0319@gmail.com");
