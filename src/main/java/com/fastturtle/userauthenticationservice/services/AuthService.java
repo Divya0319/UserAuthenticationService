@@ -74,46 +74,8 @@ public class AuthService implements IAuthService {
             EmailDTO emailDTO = new EmailDTO();
             emailDTO.setTo(email);
             emailDTO.setSubject("Welcome to FastTurtle");
-            emailDTO.setBody("<!DOCTYPE html>\n" +
-                    "<html lang=\"en\">\n" +
-                    "<head>\n" +
-                    "    <meta charset=\"UTF-8\">\n" +
-                    "    <meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\">\n" +
-                    "    <title>FastTurtle - Transforming Lives</title>\n" +
-                    "</head>\n" +
-                    "<body style=\"font-family: Arial, sans-serif; margin: 0; padding: 0; background-color: #f5f5f5; color: #333;\">\n" +
-                    "    <div style=\"max-width: 600px; margin: 20px auto; background-color: #ffffff; border-radius: 8px; overflow: hidden; box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);\">\n" +
-                    "        <div style=\"background-color: #3f51b5; color: #ffffff; padding: 20px; text-align: center;\">\n" +
-                    "            <h1 style=\"margin: 0; font-size: 24px;\">Welcome to FastTurtle</h1>\n" +
-                    "        </div>\n" +
-                    "\n" +
-                    "        <div style=\"padding: 20px;\">\n" +
-                    "            <p style=\"font-size: 16px; line-height: 1.6;\">Hi " + email + ",</p>\n" +
-                    "\n" +
-                    "            <p style=\"font-size: 16px; line-height: 1.6;\">We're excited to have you on board! Here at FastTurtle, we strive to provide you with the best experience. Below is a quick overview of what we have to offer:</p>\n" +
-                    "\n" +
-                    "            <ul style=\"font-size: 16px; line-height: 1.6;\">\n" +
-                    "                <li> 1: Art Of Living.</li>\n" +
-                    "                <li> 2: Live like there is no tomorrow.</li>\n" +
-                    "                <li> 3: Glide like an Eagle.</li>\n" +
-                    "            </ul>\n" +
-                    "\n" +
-                    "            <p style=\"font-size: 16px; line-height: 1.6;\">Click the button below to explore your dashboard and get started:</p>\n" +
-                    "\n" +
-                    "            <div style=\"text-align: center; margin: 20px 0;\">\n" +
-                    "                <a href=\"https://codewithdivya.tech\" target=\"_blank\" style=\"background-color: #3f51b5; color: #ffffff; text-decoration: none; padding: 12px 24px; border-radius: 4px; font-size: 16px; display: inline-block;\">Get Started</a>\n" +
-                    "            </div>\n" +
-                    "\n" +
-                    "            <p style=\"font-size: 16px; line-height: 1.6;\">If you have any questions, feel free to <a href=\"divygupta0319@gmail.com\" style=\"color: #3f51b5; text-decoration: none;\">reach out to us</a>. We're here to help!</p>\n" +
-                    "        </div>\n" +
-                    "\n" +
-                    "        <div style=\"background-color: #f5f5f5; text-align: center; padding: 10px 20px; font-size: 12px; color: #666;\">\n" +
-                    "            <p style=\"margin: 0;\">&copy; 2024 FastTurtle. All rights reserved.</p>\n" +
-                    //"            <p style=\"margin: 0;\"><a href=\"[Privacy Policy Link]\" style=\"color: #3f51b5; text-decoration: none;\">Privacy Policy</a> | <a href=\"[Unsubscribe Link]\" style=\"color: #3f51b5; text-decoration: none;\">Unsubscribe</a></p>\n" +
-                    "        </div>\n" +
-                    "    </div>\n" +
-                    "</body>\n" +
-                    "</html>");
+            String[] result = email.split("@");
+            emailDTO.setBody(getEmailBody(result[0]));
             emailDTO.setFrom("divygupta0319@gmail.com");
 
             kafkaProducerClient.sendMessage("signup", objectMapper.writeValueAsString(emailDTO));
@@ -122,6 +84,57 @@ public class AuthService implements IAuthService {
         }
 
         return user;
+    }
+
+    private String getEmailBody(String username) {
+
+        return "<!DOCTYPE html>\n" +
+                "<html lang=\"en\">\n" +
+                "<head>\n" +
+                "    <meta charset=\"UTF-8\">\n" +
+                "    <meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\">\n" +
+                "    <title>FastTurtle - Transforming Lives</title>\n" +
+                "</head>\n" +
+                "<body style=\"font-family: Arial, sans-serif; margin: 0; padding: 0; background-color: #f5f5f5; color: #333;\">\n" +
+                "    <div style=\"max-width: 600px; margin: 20px auto; background-color: #ffffff; border-radius: 8px; overflow: hidden; box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);\">\n" +
+                "        <div style=\"background-color: #3f51b5; color: #ffffff; padding: 20px; text-align: center;\">\n" +
+                "            <h1 style=\"margin: 0; font-size: 24px;\">Welcome to FastTurtle</h1>\n" +
+                "        </div>\n" +
+                "\n" +
+                "        <div style=\"padding: 20px;\">\n" +
+                "            <p style=\"font-size: 16px; line-height: 1.6;\">Hi " + username + ",</p>\n" +
+
+                "       <img src=\"https://i.imgur.com/HxcZEQ7.png\" alt=\"Imgur\" width=\"432\" height=\"577\">"+
+                "\n" +
+                "            <p style=\"font-size: 16px; line-height: 1.6;\">We're excited to have you on board! Here at FastTurtle, we strive to provide you with the best experience. Below is a quick overview of what we have to offer:</p>\n" +
+                "\n" +
+                "            <ul style=\"font-size: 16px; line-height: 1.6;\">\n" +
+                "                <li> 1: Art Of Living.</li>\n" +
+                "                <li> 2: Live like there is no tomorrow.</li>\n" +
+                "                <li> 3: Glide like an Eagle.</li>\n" +
+                "            </ul>\n" +
+                "\n" +
+                "            <p style=\"font-size: 16px; line-height: 1.6;\">Click the button below to explore your dashboard and get started:</p>\n" +
+                "\n" +
+                "            <div style=\"text-align: center; margin: 20px 0;\">\n" +
+                "                <a href=\"https://codewithdivya.tech\" target=\"_blank\" style=\"background-color: #3f51b5; color: #ffffff; text-decoration: none; padding: 12px 24px; border-radius: 4px; font-size: 16px; display: inline-block;\">Get Started</a>\n" +
+                "            </div>\n" +
+                "\n" +
+                "            <p style=\"font-size: 16px; line-height: 1.6;\">If you have any questions, feel free to <a href=\"mailto:divygupta0319@gmail.com\" style=\"color: #3f51b5; text-decoration: none;\">reach out to us</a>. We're here to help!</p>\n" +
+                "        </div>\n" +
+                "\n" +
+                "        <div style=\"background-color: #f5f5f5; text-align: center; padding: 10px 20px; font-size: 12px; color: #666;\">\n" +
+                "            <p style=\"margin: 0;\">&copy; 2024 FastTurtle. All rights reserved.</p>\n" +
+                //"            <p style=\"margin: 0;\"><a href=\"[Privacy Policy Link]\" style=\"color: #3f51b5; text-decoration: none;\">Privacy Policy</a> | <a href=\"[Unsubscribe Link]\" style=\"color: #3f51b5; text-decoration: none;\">Unsubscribe</a></p>\n" +
+                "        </div>\n" +
+
+                "        <div style=\"margin-left: 60px\">\n" +
+                "           <p style=\"font-size: 16px; line-height: 1.6;\"><i>This is a system generated mail. Please do not reply</i></p>\n" +
+                "        </div>"+
+                "    </div>\n" +
+                "</body>\n" +
+                "</html>";
+
     }
 
     @Override
