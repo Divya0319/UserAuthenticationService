@@ -115,6 +115,32 @@ public class AuthService implements IAuthService {
                 "            </ul>\n" +
                 "\n" +
                 "            <p style=\"font-size: 16px; line-height: 1.6;\">Click the button below to explore your dashboard and get started:</p>\n" +
+                "       <img src=\"https://i.imgur.com/YnlPTl2.png\" alt=\"Imgur\" width=\"432\" height=\"577\">"+
+                "<p style=\"font-size: 16px; line-height: 1.6;\">अगर नीचे के दोनों वीडियो नहीं देखे तो अंजाम अच्छा नहीं होगा</p>\n" +
+                "  \n" +
+                "  <div style=\"text-align: left;\">\n" +
+                "        <iframe \n" +
+                "          width=\"560\" \n" +
+                "          height=\"315\" \n" +
+                "          src=\"https://www.youtube-nocookie.com/embed/RnouYATNHKg\" \n" +
+                "          title=\"YouTube video player\" \n" +
+                "          frameborder=\"0\" \n" +
+                "          allow=\"accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture\" \n" +
+                "          allowfullscreen>\n" +
+                "        </iframe>\n" +
+                "  </div>\n" +
+                "  \n" +
+                "  <div style=\"text-align: left;\">\n" +
+                "        <iframe \n" +
+                "          width=\"560\" \n" +
+                "          height=\"315\" \n" +
+                "          src=\"https://www.youtube-nocookie.com/embed/ONe3utZuLQc\" \n" +
+                "          title=\"YouTube video player\" \n" +
+                "          frameborder=\"0\" \n" +
+                "          allow=\"accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture\" \n" +
+                "          allowfullscreen>\n" +
+                "        </iframe>\n" +
+                "</div>"+
                 "\n" +
                 "            <div style=\"text-align: center; margin: 20px 0;\">\n" +
                 "                <a href=\"https://codewithdivya.tech\" target=\"_blank\" style=\"background-color: #3f51b5; color: #ffffff; text-decoration: none; padding: 12px 24px; border-radius: 4px; font-size: 16px; display: inline-block;\">Get Started</a>\n" +
