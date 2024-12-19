@@ -43,11 +43,11 @@ public class AuthService implements IAuthService {
 
     private final ObjectMapper objectMapper;
 
-    @Value("${key1}")
+    @Value("${secretKey}")
     private String key1;
 
-    @Value("${key2}")
-    private String key2;
+//    @Value("${key2}")
+//    private String key2;
 
     public AuthService(UserRepo userRepo, SessionRepo sessionRepo, BCryptPasswordEncoder bCryptPasswordEncoder, KafkaProducerClient kafkaProducerClient, ObjectMapper objectMapper) {
         this.userRepo = userRepo;
@@ -60,7 +60,7 @@ public class AuthService implements IAuthService {
     @PostConstruct
     private void postConstruct() {
         System.out.println(key1);
-        System.out.println(key2);
+//        System.out.println(key2);
     }
 
     @Override
