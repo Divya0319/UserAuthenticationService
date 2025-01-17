@@ -8,6 +8,7 @@ import com.fastturtle.userauthenticationservice.models.Role;
 import com.fastturtle.userauthenticationservice.models.Session;
 import com.fastturtle.userauthenticationservice.models.SessionState;
 import com.fastturtle.userauthenticationservice.models.User;
+import com.fastturtle.userauthenticationservice.repos.RoleRepo;
 import com.fastturtle.userauthenticationservice.repos.SessionRepo;
 import com.fastturtle.userauthenticationservice.repos.UserRepo;
 import io.jsonwebtoken.Claims;
@@ -27,10 +28,7 @@ import org.springframework.util.MultiValueMap;
 
 import javax.crypto.SecretKey;
 import java.nio.charset.StandardCharsets;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
 
 @Service
 public class AuthService implements IAuthService {
@@ -38,6 +36,8 @@ public class AuthService implements IAuthService {
     private final UserRepo userRepo;
 
     private final SessionRepo sessionRepo;
+
+    private final RoleRepo roleRepo;
 
     private final BCryptPasswordEncoder bCryptPasswordEncoder;
 
@@ -51,9 +51,10 @@ public class AuthService implements IAuthService {
 //    @Value("${key2}")
 //    private String key2;
 
-    public AuthService(UserRepo userRepo, SessionRepo sessionRepo, BCryptPasswordEncoder bCryptPasswordEncoder, KafkaProducerClient kafkaProducerClient, ObjectMapper objectMapper) {
+    public AuthService(UserRepo userRepo, SessionRepo sessionRepo, RoleRepo roleRepo, BCryptPasswordEncoder bCryptPasswordEncoder, KafkaProducerClient kafkaProducerClient, ObjectMapper objectMapper) {
         this.userRepo = userRepo;
         this.sessionRepo = sessionRepo;
+        this.roleRepo = roleRepo;
         this.bCryptPasswordEncoder = bCryptPasswordEncoder;
         this.kafkaProducerClient = kafkaProducerClient;
         this.objectMapper = objectMapper;
@@ -72,9 +73,18 @@ public class AuthService implements IAuthService {
             return null;
         }
 
+        Set<Role> userRoles = new HashSet<>();
+
+        for(Role roleRequest : roles) {
+            Role role = roleRepo.findByName(roleRequest.getName())
+                    .orElseGet(() -> roleRepo.save(new Role(roleRequest.getName())));
+            userRoles.add(role);
+        }
+
         User user = new User();
         user.setEmail(email);
         user.setPassword(bCryptPasswordEncoder.encode(password));
+        user.setRoles(userRoles);
         userRepo.save(user);
         try {
             EmailDTO emailDTO = new EmailDTO();
