@@ -16,5 +16,5 @@ public abstract class BaseModel {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private Status status;
+    private Status status = Status.ACTIVE;
 }

@@ -19,7 +19,7 @@ public class User extends BaseModel {
 
     @ManyToMany
     private Set<Role> roles = new HashSet<>();  // bcz a person can have multiple roles(instructor, mentor, ta etc.)
-                                                // in case we don't define a role, by default it will nbe empty set for this user
+                                                // in case we don't define a role, by default it will be empty set for this user
 
     // one user can have many roles
     // one role can be played by multiple people(many people can be instructors at the same time)
