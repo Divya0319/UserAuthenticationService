@@ -19,6 +19,7 @@ public class UserController {
     @GetMapping("/users/{id}")
     public UserDTO getUserDetails(@PathVariable Long id) {
         User user = userService.getUser(id);
+        System.out.println("USER: " + user.getEmail());
         return from(user);
     }
 
