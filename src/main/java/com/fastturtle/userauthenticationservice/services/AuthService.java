@@ -84,16 +84,16 @@ public class AuthService implements IAuthService {
         user.setPassword(bCryptPasswordEncoder.encode(password));
         user.setRoles(userRoles);
         userRepo.save(user);
-        try {
-            EmailDTO emailDTO = new EmailDTO();
-            emailDTO.setSubject("Welcome to FastTurtle");
-            emailDTO.setBody("Where turtle is faster than rabbit");
-            emailDTO.setFrom("davidodenkirk@gmail.com");
-
-            kafkaProducerClient.sendMessage("signup", objectMapper.writeValueAsString(emailDTO));
-        } catch (JsonProcessingException e) {
-            throw new RuntimeException(e);
-        }
+//        try {
+//            EmailDTO emailDTO = new EmailDTO();
+//            emailDTO.setSubject("Welcome to FastTurtle");
+//            emailDTO.setBody("Where turtle is faster than rabbit");
+//            emailDTO.setFrom("davidodenkirk@gmail.com");
+//
+//            kafkaProducerClient.sendMessage("signup", objectMapper.writeValueAsString(emailDTO));
+//        } catch (JsonProcessingException e) {
+//            throw new RuntimeException(e);
+//        }
 
         return user;
     }
