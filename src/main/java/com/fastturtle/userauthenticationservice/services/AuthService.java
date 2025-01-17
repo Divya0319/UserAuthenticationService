@@ -29,6 +29,7 @@ import org.springframework.util.MultiValueMap;
 import javax.crypto.SecretKey;
 import java.nio.charset.StandardCharsets;
 import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 public class AuthService implements IAuthService {
@@ -67,19 +68,16 @@ public class AuthService implements IAuthService {
     }
 
     @Override
-    public User signUp(String email, String password, Set<Role> roles) {
+    public User signUp(String email, String password, List<String> roleNames) {
         Optional<User> userOptional = userRepo.findByEmail(email);
         if(userOptional.isPresent()) {
             return null;
         }
 
-        Set<Role> userRoles = new HashSet<>();
-
-        for(Role roleRequest : roles) {
-            Role role = roleRepo.findByName(roleRequest.getName())
-                    .orElseGet(() -> roleRepo.save(new Role(roleRequest.getName())));
-            userRoles.add(role);
-        }
+        Set<Role> userRoles = roleNames.stream()
+                .map(roleName -> roleRepo.findByName(roleName)
+                        .orElseGet(() -> roleRepo.save(new Role(roleName))))
+                .collect(Collectors.toSet());
 
         User user = new User();
         user.setEmail(email);

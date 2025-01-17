@@ -4,6 +4,7 @@ import com.fastturtle.userauthenticationservice.models.Role;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.util.List;
 import java.util.Set;
 
 @Getter
@@ -14,5 +15,5 @@ public class SignupRequestDTO {
 
     private String password;
 
-    private Set<Role> roles;
+    private List<String> roles;
 }

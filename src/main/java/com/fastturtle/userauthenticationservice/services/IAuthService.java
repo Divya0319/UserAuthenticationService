@@ -5,11 +5,12 @@ import com.fastturtle.userauthenticationservice.models.User;
 import org.antlr.v4.runtime.misc.Pair;
 import org.springframework.util.MultiValueMap;
 
+import java.util.List;
 import java.util.Set;
 
 public interface IAuthService {
 
-    User signUp(String email, String password, Set<Role> roles);
+    User signUp(String email, String password, List<String> roleNames);
 
     Pair<User, MultiValueMap<String, String>> login(String email, String password);
 
