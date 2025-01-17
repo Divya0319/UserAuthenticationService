@@ -37,7 +37,7 @@ public class AuthController {
     @PostMapping("/signup")
     public ResponseEntity<UserDTO> signUp(@RequestBody SignupRequestDTO signupRequestDTO) {
 
-        User user = authService.signUp(signupRequestDTO.getEmail(), signupRequestDTO.getPassword());
+        User user = authService.signUp(signupRequestDTO.getEmail(), signupRequestDTO.getPassword(), signupRequestDTO.getRoles());
 
         if(user == null) {
             throw new UserAlreadyExistsException("User Already exists. Please try a different email");

@@ -4,6 +4,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fastturtle.userauthenticationservice.clients.KafkaProducerClient;
 import com.fastturtle.userauthenticationservice.dtos.EmailDTO;
+import com.fastturtle.userauthenticationservice.models.Role;
 import com.fastturtle.userauthenticationservice.models.Session;
 import com.fastturtle.userauthenticationservice.models.SessionState;
 import com.fastturtle.userauthenticationservice.models.User;
@@ -29,6 +30,7 @@ import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
+import java.util.Set;
 
 @Service
 public class AuthService implements IAuthService {
@@ -64,7 +66,7 @@ public class AuthService implements IAuthService {
     }
 
     @Override
-    public User signUp(String email, String password) {
+    public User signUp(String email, String password, Set<Role> roles) {
         Optional<User> userOptional = userRepo.findByEmail(email);
         if(userOptional.isPresent()) {
             return null;
@@ -76,8 +78,8 @@ public class AuthService implements IAuthService {
         userRepo.save(user);
         try {
             EmailDTO emailDTO = new EmailDTO();
-            emailDTO.setSubject("Welcome to Bhosadi");
-            emailDTO.setBody("Ye kya bak rahe ho madarchod");
+            emailDTO.setSubject("Welcome to FastTurtle");
+            emailDTO.setBody("Where turtle is faster than rabbit");
             emailDTO.setFrom("davidodenkirk@gmail.com");
 
             kafkaProducerClient.sendMessage("signup", objectMapper.writeValueAsString(emailDTO));
